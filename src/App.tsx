@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import FloatingChatButton from './components/FloatingChatButton';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
+import { ChatProvider } from './context/ChatContext';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface AppProps {
+  primaryColor: string;
+  secondaryColor: string;
+  buttonText?: string;
+  buttonIcon?: React.ReactElement;
+  language?: 'en' | 'es';
+  userName: string;
+  helpText: string;
 }
+
+const App: React.FC<AppProps> = ({ primaryColor, secondaryColor, buttonText, buttonIcon, language, userName, helpText }) => {
+  const theme = createTheme({
+    palette: {
+      primary: {
+        main: primaryColor,
+      },
+      secondary: {
+        main: secondaryColor,
+      },
+    },
+  });
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <ChatProvider>
+        <FloatingChatButton
+          buttonText={buttonText}
+          buttonIcon={buttonIcon}
+          language={language}
+          userName={userName}
+          helpText={helpText}
+        />
+      </ChatProvider>
+    </ThemeProvider>
+  );
+};
 
 export default App;
