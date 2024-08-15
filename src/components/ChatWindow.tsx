@@ -17,6 +17,8 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages, helpText }) => {
         border: '1px solid #ddd',
         borderRadius: '8px',
         position: 'relative',
+        display: 'flex',
+        flexDirection: 'column-reverse',
         '&::-webkit-scrollbar': {
           width: '8px',
         },
@@ -53,11 +55,29 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages, helpText }) => {
         </Typography>
       ) : (
         messages.map((msg, index) => (
-          <Box key={index} mb={2}>
-            <Typography variant="body2" color="textSecondary">
-              {msg.user} - {msg.time}
-            </Typography>
-            <Typography variant="body1">{msg.text}</Typography>
+          <Box
+            key={index}
+            mb={2}
+            sx={{
+              display: 'flex',
+              justifyContent: msg.user === 'Agent' ? 'flex-start' : 'flex-end',
+            }}
+          >
+            <Box
+              sx={{
+                maxWidth: '60%',
+                bgcolor: msg.user === 'Agent' ? 'grey.200' : 'primary.main',
+                color: msg.user === 'Agent' ? 'text.primary' : 'primary.contrastText',
+                borderRadius: '8px',
+                padding: '8px',
+                textAlign: msg.user === 'Agent' ? 'left' : 'right',
+              }}
+            >
+              <Typography variant="body2" color="textSecondary">
+                {msg.user} - {msg.time}
+              </Typography>
+              <Typography variant="body1">{msg.text}</Typography>
+            </Box>
           </Box>
         ))
       )}

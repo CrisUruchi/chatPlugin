@@ -1,39 +1,45 @@
-import React, { useState } from 'react';
-import { Box, TextField, Button } from '@mui/material';
+import React, { useState, RefObject, useEffect } from 'react';
+import { Box, Button, TextField } from '@mui/material';
 
 interface ChatInputProps {
-  onSend: (message: string) => void;
+  onSend: (text: string) => void;
+  disabled: boolean;
+  inputRef: RefObject<HTMLInputElement>;
 }
 
-const ChatInput: React.FC<ChatInputProps> = ({ onSend }) => {
-  const [message, setMessage] = useState<string>('');
+const ChatInput: React.FC<ChatInputProps> = ({ onSend, disabled, inputRef }) => {
+  const [text, setText] = useState('');
 
-  const handleSend = () => {
-    if (message.trim()) {
-      onSend(message);
-      setMessage('');
+  const handleSendClick = () => {
+    if (text.trim()) {
+      onSend(text.trim());
+      setText('');
     }
   };
 
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      handleSend();
+  useEffect(() => {
+    if (!disabled && inputRef.current) {
+      inputRef.current.focus(); // Forzar el enfoque cuando no está deshabilitado
     }
-  };
+  }, [disabled, inputRef]);
 
   return (
-    <Box display="flex" mt={2} sx={{ padding: '0 8px' }}>
+    <Box display="flex">
       <TextField
         fullWidth
         variant="outlined"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyPress={handleKeyPress}
-        placeholder="Type a message"
-        sx={{ marginRight: '8px' }}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter' && !e.shiftKey && !disabled) {
+            handleSendClick();
+            e.preventDefault();
+          }
+        }}
+        disabled={disabled}
+        inputRef={inputRef} // Aplica la referencia al input
       />
-      <Button variant="contained" color="primary" onClick={handleSend}>
+      <Button variant="contained" color="primary" onClick={handleSendClick} disabled={disabled}>
         Send
       </Button>
     </Box>

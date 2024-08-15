@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_API_URL;
+const INSTANCE_ID = process.env.REACT_APP_INSTANCE_ID;
 
 let accessToken = '';
 let refreshToken = '';
@@ -61,7 +62,7 @@ const apiCall = async (method: 'get' | 'post', endpoint: string, data?: any): Pr
 
 export const sendMessage = async (toFrom: string, id: string, message: string): Promise<any> => {
   const refId = id;
-  const endpoint = '/queue/out/web/1';
+  const endpoint = `/queue/in/web/${INSTANCE_ID}`;
   const data = {
     toFrom,
     message,

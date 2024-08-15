@@ -21,11 +21,6 @@ export const connectSocket = async () => {
   socket.on('disconnect', () => {
     console.log('Disconnected from WebSocket server');
   });
-
-  socket.on('newMessage', (message: string) => {
-    console.log('New message received:', message);
-    // Aquí puedes manejar la recepción de nuevos mensajes y actualizarlos en la interfaz
-  });
 };
 
 export const sendMessage = async (message: string) => {
@@ -34,6 +29,22 @@ export const sendMessage = async (message: string) => {
   }
 
   socket.emit('message', message);
+};
+
+export const joinThread = async (threadId: string) => {
+  if (!socket) {
+    await connectSocket(); // Asegurarse de que la conexión está establecida
+  }
+
+  socket.emit('joinThread', threadId);
+};
+
+export const subscribeToMessages = (callback: (message: any) => void) => {
+  if (!socket) {
+    throw new Error("Socket is not connected");
+  }
+
+  socket.on('newMessage', callback);
 };
 
 const renewToken = async () => {
