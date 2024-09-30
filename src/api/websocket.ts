@@ -12,6 +12,9 @@ export const connectSocket = async () => {
   socket = io(`${API_URL}`, {
     query: { token },
     transports: ['websocket'],
+    reconnection: true, // Activar reconexión automática
+    reconnectionAttempts: 5, // Número de intentos antes de fallar
+    reconnectionDelay: 1000, // Tiempo entre intentos de reconexión
   });
 
   socket.on('connect', () => {
@@ -21,6 +24,20 @@ export const connectSocket = async () => {
   socket.on('disconnect', () => {
     console.log('Disconnected from WebSocket server');
   });
+
+  socket.on('connect_error', async (error) => {
+    console.log("connect_error", error);
+    if (error.message === 'invalid token') {
+      await renewToken();
+      socket.io.opts.query = { token };  // Actualiza el token en los parámetros de consulta
+      socket.connect();  // Reintenta la conexión
+    }
+  });
+
+  socket.on('error', (error) => {
+    console.error('Socket error:', error);
+  });
+  
 };
 
 export const sendMessage = async (message: string) => {
@@ -44,7 +61,11 @@ export const subscribeToMessages = (callback: (message: any) => void) => {
     throw new Error("Socket is not connected");
   }
 
-  socket.on('newMessage', callback);
+  //socket.on('newMessage', callback);
+  socket.on('newMessage', (message) => {
+    console.log('Received new message:', message);
+    callback(message);
+  });
 };
 
 const renewToken = async () => {

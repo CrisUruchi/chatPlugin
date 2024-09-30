@@ -19,6 +19,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({ messages, helpText }) => {
         position: 'relative',
         display: 'flex',
         flexDirection: 'column-reverse',
+        backgroundImage: `url('https://www.fakewhats.com/images/iphone/app-bg.jpg')`,
         '&::-webkit-scrollbar': {
           width: '8px',
         },
